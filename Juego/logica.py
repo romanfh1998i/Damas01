@@ -1,78 +1,79 @@
-import random
-import Tablero
+from Tablero import Deck as Decker
+from Juego import juego as Game
+
 import AI
+import random
 
-import Juego
-
-encabezado = """
-    ____                                _______            _                   __            
-   / __ \____ _____ ___  ____ ______   / ____(_____  _____(_____  ____  ____ _/ /___  _______
-  / / / / __ `/ __ `__ \/ __ `/ ___/  / /   / / __ \/ ___/ / __ \/ __ \/ __ `/ __/ / / / ___/
- / /_/ / /_/ / / / / / / /_/ (__  )  / /___/ / / / / /__/ / / / / / / / /_/ / /_/ /_/ (__  ) 
-/_____/\__,_/_/ /_/ /_/\__,_/____/   \____/_/_/ /_/\___/_/_/ /_/_/ /_/\__,_/\__/\__,_/____/  by Rom's                                                                                         
-"""
-color = random.choice(['black', 'white'])
-
-if color == 'black':
-    user_color = 'x'
-    bot_color = 'o'
-
-else:
-    user_color = 'o'
-    bot_color = 'x'
-
-print('\nYou will play for', color + '!\n')
+import itertools
 
 
-deck = Tablero.Deck(user_color)
+def game_init():
+    color = select_user()
+    my_deck = Decker(color)
 
-while True:
-    print(encabezado)
-
-    deck.deck_output()
-
-# user logic
     while True:
-        user = AI.Usuario(user_color, deck.deck)
-        user.JEnemigo()
+        print_game_header()  # Prints the game Header
+        my_deck.deck_output()  # Prints the actual Deck
+        while True:
+            usuario = AI.Usuario(color, my_deck)
+            usuario.JEnemigo()
+            try:
+                usercoordsPara = usuario.ccordinadas(input('Entra la coordenada de la dama:'))
+                usercoordsto = usuario.ccordinadas(input('Entra los movimientos coordenadas:'))
+            except KeyError or IndexError:
+                continue
 
-        try:
-            user_coords_from = user.ccordinadas(input('Enter your checker coordinates: '))
-            user_coords_to = user.ccordinadas(input('Enter your move destination coordinates: '))
-        except KeyError or IndexError:
-            continue
+            user_pasos_validacion_1 = usuario.validacion(usercoordsPara)[0]
+            user_pasos_validacion_2 = usuario.validacion(usercoordsPara)[1]
 
-        user_step_validation_1 = user.validacion(user_coords_from)[0]
-        user_step_validation_2 = user.validacion(user_coords_from)[1]
+            # user_pasos_validacion_1 = usuario.paso.append(usercoordsPara[0])
+            # user_pasos_validacion_2 = usuario.paso.append(usercoordsPara[1])
+            usuario_damas = Game(usercoordsPara, color, Decker)
 
-        user_checker = Juego.Checker(user_coords_from, user_color, deck.deck)
+            if usuario_damas.attack_targets():
+                usercoordsPara = usuario.ccordinadas(input('Entra la coordenada de la dama:'))
+                usercoordsto = usuario.ccordinadas(input('Entra los movimientos coordenadas:'))
+                usuario_damas.attack(usercoordsto)
+                break
+            user_paso = usuario_damas.paso(usercoordsto, user_pasos_validacion_1 , user_pasos_validacion_2)
+            if user_paso:
+                Decker.update(usercoordsPara, usercoordsto)
+            else:
+                print('Usuario input-Incorrecto!!')
 
-        if user_checker.attack_needed(user.JEnemigo()):
+        bot = AI.bot(color, my_deck)
+        usuario.JEnemigo()
+        bot_pasos = bot._paso()
+        bot_damas_choice = bot_pasos[0]
+        bot_movimiento = bot_pasos[1]
 
-            user_coords_from = user.ccordinadas(input('Enter your checker for attack: '))
-            user_coords_to = user.ccordinadas(input('Enter your move destination coordinates: '))
-            user_checker.attack(user_coords_to)
-            break
+        bot_damas = Game(color, bot_damas_choice, Decker)
+        my_deck.update(bot_damas_choice, bot_movimiento)
 
-        user_step = user_checker.step(user_coords_to, user_step_validation_1, user_step_validation_2)
 
-        if user_step:
-            deck.deck_update(user_coords_from, user_coords_to)
-            break
-        else:
-            print('User input - incorrect!')
+def print_game_header():
+    encabezado = """
+            ____                                _______            _                   __            
+           / __ \____ _____ ___  ____ ______   / ____(_____  _____(_____  ____  ____ _/ /___  _______
+          / / / / __ `/ __ `__ \/ __ `/ ___/  / /   / / __ \/ ___/ / __ \/ __ \/ __ `/ __/ / / / ___/
+         / /_/ / /_/ / / / / / / /_/ (__  )  / /___/ / / / / /__/ / / / / / / / /_/ / /_/ /_/ (__  ) 
+        /_____/\__,_/_/ /_/ /_/\__,_/____/   \____/_/_/ /_/\___/_/_/ /_/_/ /_/\__,_/\__/\__,_/____/  by Rom's                                                                                         
+        """
+    print(encabezado)
+    return
 
-        # Bot logic
-    bot = Juego.Bot(bot_color, deck.deck)
-    bot.player_army()
 
-    bot_step = list(bot.bot_step())
+def select_user():
+    usuario = random.choice(['black', 'white'])
 
-    bot_checker_choice = bot_step[0]
+    if usuario == 'black':
+        color = 'x'
+    else:
+        color = 'o'
 
-    bot_movement = bot_step[1]
+    print('\nYou will play for', usuario + '!\n')
+    return color
 
-    bot_checker = Tablero.Checker(bot_color, bot_checker_choice, deck.deck)
 
-    deck.deck_update(bot_checker_choice, bot_movement)
- 
+if __name__ == "__main__":
+    game_init()
