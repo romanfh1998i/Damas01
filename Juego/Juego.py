@@ -54,7 +54,10 @@ class juego:
 
             enemy_army = []
 
-
+            for x in range(len(self.deck.deck)):
+                for y in range(len(self.deck.deck[x])):
+                    if self.deck[x][y] != '  ' and self.deck[x][y] != self.color:
+                        enemy_army.append((x, y))
             first_check = []
             second_check = []
 

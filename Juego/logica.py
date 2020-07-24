@@ -4,7 +4,7 @@ from Juego import juego as Game
 import AI
 import random
 
-import itertools
+
 
 
 def game_init():
@@ -43,7 +43,7 @@ def game_init():
 
         bot = AI.bot(color, my_deck)
         usuario.JEnemigo()
-        bot_pasos = bot._paso()
+        bot_pasos = list(bot._paso())
         bot_damas_choice = bot_pasos[0]
         bot_movimiento = bot_pasos[1]
 

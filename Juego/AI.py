@@ -42,8 +42,8 @@ class bot(Player):
 
     def _paso(self):
         nada = []
-        botdamas = []
-        botpasos = []
+        botdamasTd = []
+        botpasosTD = []
         for x in range(len(self.deck.deck)):
             for y in range(len(self.deck.deck[x])):
                 if self.deck.deck[x][y] == ' ':
@@ -51,12 +51,17 @@ class bot(Player):
         for i in self.Enemigo:
             for ef in nada:
                 if ef == self.validacion(i)[0] or ef == self.validacion(i)[1]:
-                    botdamas.append(i)
-                    botpasos.append(ef)
-        unicodamas = list(set(botdamas))
-        unicopasos = list(set(botpasos))
+                    botdamasTd.append(i)
+                    botpasosTD.append(ef)
+        unicodamas = list(set(botdamasTd))
+        unicopasos = list(set(botpasosTD))
         print('Bot decision correcta', unicodamas)
-        botpasos = random.choice(unicodamas)
+        botpasos2 = random.choice(unicodamas)
         print('Bot Damas pasos ', botpasos)
+        while True:
 
-        return [botpasos, botdamas]
+                botpasos3=random.choice(unicodamas)
+                print('Bot choice step 1',  botpasos3)
+                if  botpasos2 in self.validacion(botpasos2):
+                    break
+        return botpasos2,botpasos3
