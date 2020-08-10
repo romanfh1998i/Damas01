@@ -1,10 +1,9 @@
 from Tablero import Deck as Decker
 from Juego import juego as Game
-
 import AI
 import random
 
-
+import flask
 
 
 def game_init():
@@ -48,7 +47,7 @@ def game_init():
         bot_movimiento = bot_pasos[1]
 
         bot_damas = Game(color, bot_damas_choice, Decker)
-        my_deck.update(bot_damas_choice, bot_movimiento)
+        my_deck.deck_update(bot_damas_choice, bot_movimiento)
 
 
 def print_game_header():

@@ -35,33 +35,34 @@ class Usuario(Player):
 
 
 class bot(Player):
-    def validacion(self, damascoordinadas):
+    def svalidacion(self, damascoordinadas):
         condicion1 = (damascoordinadas[0] + 1, damascoordinadas[1] + 1)
-        condicion2 = (damascoordinadas[0] - 1, damascoordinadas[1] - 1)
+        condicion2 = (damascoordinadas[0] + 1, damascoordinadas[1] - 1)
         return condicion1, condicion2
 
+
     def _paso(self):
-        nada = []
-        botdamasTd = []
-        botpasosTD = []
+        empty_fields = []
+        bot_checkers_to_go = []
+        bot_possible_steps = []
+
         for x in range(len(self.deck.deck)):
             for y in range(len(self.deck.deck[x])):
                 if self.deck.deck[x][y] == ' ':
-                    nada.append((x, y))
-        for i in self.Enemigo:
-            for ef in nada:
-                if ef == self.validacion(i)[0] or ef == self.validacion(i)[1]:
-                    botdamasTd.append(i)
-                    botpasosTD.append(ef)
-        unicodamas = list(set(botdamasTd))
-        unicopasos = list(set(botpasosTD))
-        print('Bot decision correcta', unicodamas)
-        botpasos2 = random.choice(unicodamas)
-        print('Bot Damas pasos ', botpasos)
-        while True:
+                    empty_fields.append((x, y))
 
-                botpasos3=random.choice(unicodamas)
-                print('Bot choice step 1',  botpasos3)
-                if  botpasos2 in self.validacion(botpasos2):
-                    break
-        return botpasos2,botpasos3
+        for i in self.Enemigo:
+            for ef in empty_fields:
+                if ef == self.svalidation(i)[0] or ef == self.step_validation(i)[1]:  # step validation
+                    bot_checkers_to_go.append(i)
+                    bot_possible_steps.append(ef)
+
+        unique_bot_checkers = list(set(bot_checkers_to_go))
+        unique_bot_steps = list(set(bot_possible_steps))
+        print('Unique list of steps', unique_bot_steps)
+
+
+
+
+
+        return [ bot_checkers_to_go, bot_possible_steps]
